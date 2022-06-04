@@ -6,17 +6,17 @@ body {
 }
 
 .game {
-  margin-top: 5vh;
+  margin-top: 3vh;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .gameboard {
-  margin-top: 5vh;
+  margin-top: 3vh;
   display: grid;
-  grid-template-columns: 10vw 10vw 10vw;
-  grid-template-rows: 10vw 10vw 10vw;
+  grid-template-columns: minmax(70px, 10vw) minmax(70px, 10vw) minmax(70px, 10vw);
+  grid-template-rows: minmax(70px, 10vw) minmax(70px, 10vw) minmax(70px, 10vw);
 }
 
 button {
@@ -28,7 +28,11 @@ button {
 
 #restart {
   margin-top: 2vh;
-  height: 4vh;
-  width: 7vw;
+  height: 40px;
+  width: 100px;
   border-radius: 5px;
+}
+
+p {
+  margin: 0px;
 }
