@@ -78,13 +78,13 @@ function render(index) {
 
 function restart() {
   const h1 = document.querySelector("h1");
+  displayController.turn = player1.name;
+  h1.innerHTML = "TIC TAC TOE";
   for (let i = 0; i < 9; i++) {
     gameBoard.gameArray[i] = null;
     let btn = document.getElementById(i);
     btn.innerText = "";
     btn.setAttribute("onclick", `render(${i})`);
     btn.removeAttribute("disabled", "disabled");
-    displayController.turn = player1.name;
-    h1.innerHTML = "TIC TAC TOE";
   }
 }
