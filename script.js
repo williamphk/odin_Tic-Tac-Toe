@@ -1,3 +1,5 @@
+let winner = null;
+
 const Player = (name) => {
   return { name };
 };
@@ -21,6 +23,7 @@ const displayController = (() => {
         gameBoard.gameArray[i * 3] != null
       ) {
         isWin = true;
+        winner = gameBoard.gameArray[i * 3];
       }
       if (
         gameBoard.gameArray[i] === gameBoard.gameArray[i + 3] &&
@@ -28,6 +31,7 @@ const displayController = (() => {
         gameBoard.gameArray[i] != null
       ) {
         isWin = true;
+        winner = gameBoard.gameArray[i];
       }
       if (
         i != 1 &&
@@ -36,17 +40,23 @@ const displayController = (() => {
         gameBoard.gameArray[i] != null
       ) {
         isWin = true;
+        winner = gameBoard.gameArray[i];
       }
     }
     return isWin;
   }
   function isGameTie() {
-    return gameBoard.gameArray.every((element) => element != null);
+    if (gameBoard.gameArray.every((element) => element != null)) {
+      winner = "tie";
+      return true;
+    } else {
+      return false;
+    }
   }
   return { turn: turn, isGameWin: isGameWin, isGameTie: isGameTie };
 })();
 
-function render(index) {
+function mousePressed(index) {
   let btn = document.getElementById(index);
   const h1 = document.querySelector("h1");
   btn.removeAttribute("onclick");
@@ -57,7 +67,12 @@ function render(index) {
     if (displayController.isGameWin()) {
       h1.innerHTML = `${player1.name} won!`;
     } else {
-      bestMove();
+      var move = bestMove();
+      gameBoard.gameArray[move] = "X";
+      displayController.turn = player1.name;
+      btn = document.getElementById(move);
+      btn.innerText = "X";
+      btn.removeAttribute("onclick");
     }
   }
   if (displayController.isGameWin() || displayController.isGameTie()) {
@@ -79,25 +94,66 @@ function restart() {
     gameBoard.gameArray[i] = null;
     let btn = document.getElementById(i);
     btn.innerText = "";
-    btn.setAttribute("onclick", `render(${i})`);
+    btn.setAttribute("onclick", `mousePressed(${i})`);
     btn.removeAttribute("disabled", "disabled");
   }
 }
 
 function bestMove() {
-  displayController.turn = player1.name;
-  const h1 = document.querySelector("h1");
+  // AI to make its turn
+  let bestScore = -Infinity;
+  var move;
   for (let i = 0; i < 9; i++) {
-    if (gameBoard.gameArray[i] === null) {
-      let firstEmpty = i;
-      gameBoard.gameArray[firstEmpty] = "X";
-      let btn = document.getElementById(firstEmpty);
-      btn.innerText = "X";
-      btn.removeAttribute("onclick");
-      if (displayController.isGameWin()) {
-        h1.innerHTML = `${AI.name} won!`;
+    // Is the spot available?
+    if (gameBoard.gameArray[i] == null) {
+      gameBoard.gameArray[i] = "X";
+      let score = minimax(false);
+      gameBoard.gameArray[i] = null;
+      if (score > bestScore) {
+        bestScore = score;
+        move = i;
       }
-      break;
     }
+  }
+  return move;
+}
+
+let scores = { X: 10, O: -10, tie: 0 };
+
+function minimax(isMaximizing) {
+  // let result = checkWinner();
+  displayController.isGameWin();
+  displayController.isGameTie();
+
+  if (winner !== null) {
+    let score = scores[winner];
+    winner = null;
+    return score;
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      // Is the spot available?
+      if (gameBoard.gameArray[i] == null) {
+        gameBoard.gameArray[i] = "X";
+        let score = minimax(false);
+        gameBoard.gameArray[i] = null;
+        bestScore = Math.max(score, bestScore);
+      }
+    }
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < 9; i++) {
+      // Is the spot available?
+      if (gameBoard.gameArray[i] == null) {
+        gameBoard.gameArray[i] = "O";
+        let score = minimax(true);
+        gameBoard.gameArray[i] = null;
+        bestScore = Math.min(score, bestScore);
+      }
+    }
+    return bestScore;
   }
 }
