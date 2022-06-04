@@ -3,6 +3,7 @@ body {
   display: flex;
   justify-content: center;
   font-family: "Roboto", sans-serif;
+  font-weight: 100;
 }
 
 .game {

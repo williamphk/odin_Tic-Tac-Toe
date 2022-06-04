@@ -3,7 +3,7 @@ const Player = (name) => {
 };
 
 const player1 = Player("Player1");
-const player2 = Player("Player2");
+const AI = Player("AI");
 
 const gameBoard = (() => {
   let gameArray = new Array(9).fill(null);
@@ -52,17 +52,12 @@ function render(index) {
   btn.removeAttribute("onclick");
   if (displayController.turn === player1.name) {
     btn.innerText = "O";
-    displayController.turn = player2.name;
     gameBoard.gameArray[index] = "O";
+    displayController.turn = AI.name;
     if (displayController.isGameWin()) {
       h1.innerHTML = `${player1.name} won!`;
-    }
-  } else {
-    btn.innerText = "X";
-    displayController.turn = player1.name;
-    gameBoard.gameArray[index] = "X";
-    if (displayController.isGameWin()) {
-      h1.innerHTML = `${player2.name} won!`;
+    } else {
+      bestMove();
     }
   }
   if (displayController.isGameWin() || displayController.isGameTie()) {
@@ -86,5 +81,23 @@ function restart() {
     btn.innerText = "";
     btn.setAttribute("onclick", `render(${i})`);
     btn.removeAttribute("disabled", "disabled");
+  }
+}
+
+function bestMove() {
+  displayController.turn = player1.name;
+  const h1 = document.querySelector("h1");
+  for (let i = 0; i < 9; i++) {
+    if (gameBoard.gameArray[i] === null) {
+      let firstEmpty = i;
+      gameBoard.gameArray[firstEmpty] = "X";
+      let btn = document.getElementById(firstEmpty);
+      btn.innerText = "X";
+      btn.removeAttribute("onclick");
+      if (displayController.isGameWin()) {
+        h1.innerHTML = `${AI.name} won!`;
+      }
+      break;
+    }
   }
 }
