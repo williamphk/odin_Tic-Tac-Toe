@@ -68,21 +68,31 @@ function mousePressed(index) {
       h1.innerHTML = `${player1.name} won!`;
     } else {
       var move = bestMove();
+      if (move == undefined) {
+        for (let i = 0; i < 9; i++) {
+          let btn = document.getElementById(i);
+          btn.setAttribute("disabled", "disabled");
+        }
+        if (displayController.isGameTie() && !displayController.isGameWin()) {
+          h1.innerHTML = "Tie!";
+        }
+        return;
+      }
       gameBoard.gameArray[move] = "X";
       displayController.turn = player1.name;
       btn = document.getElementById(move);
       btn.innerText = "X";
       btn.removeAttribute("onclick");
+      if (displayController.isGameWin()) {
+        h1.innerHTML = `${AI.name} won!`;
+      }
     }
   }
-  if (displayController.isGameWin() || displayController.isGameTie()) {
+  if (displayController.isGameWin()) {
     for (let i = 0; i < 9; i++) {
       let btn = document.getElementById(i);
       btn.setAttribute("disabled", "disabled");
     }
-  }
-  if (displayController.isGameTie() && !displayController.isGameWin()) {
-    h1.innerHTML = "Tie!";
   }
 }
 
@@ -121,7 +131,6 @@ function bestMove() {
 let scores = { X: 10, O: -10, tie: 0 };
 
 function minimax(isMaximizing) {
-  // let result = checkWinner();
   displayController.isGameWin();
   displayController.isGameTie();
 
